@@ -17,7 +17,7 @@ RUN npm ci --only=production && npm cache clean --force
 
 # Copy semua file aplikasi + credentials
 COPY --chown=nodejs:nodejs . .
-COPY config/g-04-450802-69a6bc04b095.json /app/config/
+COPY config/g-04-450802-839e68f5387a.json /app/config/
 
 # Environment variables (default)
 ENV NODE_ENV=production

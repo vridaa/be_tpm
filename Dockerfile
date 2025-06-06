@@ -15,9 +15,8 @@ COPY package*.json ./
 # Install dependencies
 RUN npm ci --only=production && npm cache clean --force
 
-# Copy semua file aplikasi + credentials
+# Copy semua file aplikasi
 COPY --chown=nodejs:nodejs . .
-COPY config/g-04-450802-839e68f5387a.json /app/config/
 
 # Environment variables (default)
 ENV NODE_ENV=production
@@ -35,3 +34,4 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 
 # Start aplikasi
 CMD ["dumb-init", "node", "server.js"]
+

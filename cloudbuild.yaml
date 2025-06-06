@@ -29,6 +29,9 @@ steps:
         "0",
         "--max-instances",
         "10",
+        "--allow-unauthenticated",
+        "--set-env-vars",
+        "GOOGLE_CLOUD_STORAGE_BUCKET=${_GOOGLE_CLOUD_STORAGE_BUCKET}",
       ]
 
 images:

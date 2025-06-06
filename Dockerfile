@@ -1,43 +1,37 @@
-# Memanfaatkan image dasar Node.js versi 20
-# dengan distro Alpine Linux (ukuran ringan)
 FROM node:20-alpine
 
-# Install dumb-init untuk proper signal handling
+# Install dumb-init untuk signal handling
 RUN apk add --no-cache dumb-init
 
-# Mengkonfigurasi direktori utama dalam container sebagai /app
+# Set working directory
 WORKDIR /app
 
-# Create non-root user untuk security
-RUN addgroup -g 1001 -S nodejs
-RUN adduser -S nodejs -u 1001
+# Buat non-root user
+RUN addgroup -g 1001 -S nodejs && adduser -S nodejs -u 1001
 
-# Copy package files terlebih dahulu untuk better caching
+# Copy package.json terlebih dahulu
 COPY package*.json ./
 
-# Proses instalasi dependencies production only
+# Install dependencies
 RUN npm ci --only=production && npm cache clean --force
 
-# Copy semua file aplikasi
+# Copy semua file aplikasi + credentials
 COPY --chown=nodejs:nodejs . .
+COPY config/g-04-450802-69a6bc04b095.json /app/config/
 
-# Switch ke non-root user
-USER nodejs
-
-# Membuka akses jaringan pada port 8080 untuk koneksi eksternal
-EXPOSE 8080
-
-# Set environment variables
+# Environment variables (default)
 ENV NODE_ENV=production
 ENV PORT=8080
 
+# Expose port
+EXPOSE 8080
+
+# Gunakan non-root user
+USER nodejs
+
 # Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-  CMD node -e "const http = require('http'); \
-    http.get('http://localhost:8080/health', (res) => { \
-      if (res.statusCode === 200) process.exit(0); \
-      else process.exit(1); \
-    }).on('error', () => process.exit(1));"
+  CMD curl -f http://localhost:8080/health || exit 1
 
-# Perintah utama menggunakan dumb-init untuk proper signal handling
+# Start aplikasi
 CMD ["dumb-init", "node", "server.js"]

@@ -8,7 +8,7 @@ steps:
   - name: 'gcr.io/cloud-builders/gcloud'
     args:
       [
-        'run', 'deploy', 'artefacto-backend',
+        'run', 'deploy', 'giftbouqet-backend',
         '--image', 'gcr.io/$PROJECT_ID/giftbouqet-backend',
         '--region', 'us-central1',
         '--allow-unauthenticated',
